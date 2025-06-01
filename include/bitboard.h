@@ -1,46 +1,26 @@
-/**
- * @file bitboard.h
- * @brief Definiciones para el manejo del tablero utilizando operaciones a nivel de bits.
- *
- * Este archivo contiene las definiciones de estructuras y funciones para representar
- * el tablero del Juego de la Vida como un arreglo de bits, optimizando memoria y
- * operaciones mediante manipulación bit a bit.
- */
 
+// Definiciones para manejar el tablero con operaciones a nivel de bits
 #ifndef BITBOARD_H
 #define BITBOARD_H
 
 #include <stdint.h>
 #include "config.h"
 
-/** @brief Tipo de dato para una fila del tablero (64 bits). */
+// Tipo para una fila del tablero, uso 64 bits para optimizar memoria
 typedef uint64_t BoardRow;
 
-/** @brief Estructura que representa el tablero de juego completo. */
+// Estructura del tablero, un arreglo de filas de 64 bits
 typedef struct {
-    BoardRow grid[BOARD_ROWS]; /**< Arreglo de filas, cada una representada como un entero de 64 bits. */
+    BoardRow grid[BOARD_ROWS]; // Cada fila es un entero de 64 bits
 } GameBoard;
 
-/**
- * @brief Inicializa el tablero con un patrón aleatorio.
- * @param board Puntero al tablero a inicializar.
- */
+// Inicializa el tablero con celdas vivas aleatorias
 void initialize_random_board(GameBoard *board);
 
-/**
- * @brief Cuenta los vecinos vivos de una celda utilizando operaciones bit a bit.
- * @param board Puntero al tablero.
- * @param row Fila de la celda.
- * @param col Columna de la celda.
- * @return Número de vecinos vivos.
- */
+// Cuenta los vecinos vivos de una celda en la posición (row, col)
 int count_living_neighbors(const GameBoard *board, int row, int col);
 
-/**
- * @brief Actualiza el tablero a la siguiente generación utilizando paralelismo.
- * @param current Puntero al tablero actual.
- * @param next Puntero al tablero de la siguiente generación.
- */
+// Calcula la siguiente generación del tablero usando hilos
 void compute_next_generation(const GameBoard *current, GameBoard *next);
 
-#endif /* BITBOARD_H */
+#endif 

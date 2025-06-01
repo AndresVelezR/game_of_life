@@ -1,10 +1,3 @@
-/**
- * @file main.c
- * @brief Punto de entrada del programa Juego de la Vida.
- *
- * Este archivo inicializa el tablero y ejecuta la simulación.
- */
-
 #include <string.h>
 #include "bitboard.h"
 #include "game.h"
@@ -12,13 +5,9 @@
 
 int main(int argc, char *argv[]) {
     GameBoard game_board;
-    int is_manual_mode = (argc > 1 && strcmp(argv[1], "manual") == 0);
-    
-    // Initialize the game with a random pattern
-    initialize_random_board(&game_board);
-    
-    // Run the simulation
-    run_simulation(&game_board, GENERATIONS, is_manual_mode);
+    int is_manual_mode = (argc > 1 && strcmp(argv[1], "manual") == 0); // Revisa si es modo manual
+    initialize_random_board(&game_board); // Tablero inicial aleatorio
+    run_simulation(&game_board, GENERATIONS, is_manual_mode); // Corre la simulación
     
     return 0;
 }

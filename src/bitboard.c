@@ -1,10 +1,4 @@
-/**
- * @file bitboard.c
- * @brief Implementación de operaciones a nivel de bits para el tablero.
- *
- * Este archivo implementa las funciones para manipular el tablero utilizando
- * operaciones bit a bit y paralelismo con OpenMP.
- */
+// Manejo del tablero usando operaciones de bits y OpenMP
 
 #include <stdlib.h>
 #include <time.h>
@@ -12,70 +6,54 @@
 #include "bitboard.h"
 #include "config.h"
 
-/**
- * @brief Inicializa el tablero con un patrón aleatorio.
- * @param board Puntero al tablero a inicializar.
- */
+// Llena el tablero con celdas vivas de forma aleatoria
 void initialize_random_board(GameBoard *board) {
     srand((unsigned)time(NULL));
-    #pragma omp parallel for num_threads(NUM_THREADS)
+    #pragma omp parallel for num_threads(NUM_THREADS) // Paraleliza el trabajo por filas
     for (int row_idx = 0; row_idx < BOARD_ROWS; row_idx++) {
         BoardRow current_row = 0;
         for (int col_idx = 0; col_idx < BOARD_COLS; col_idx++) {
             if (rand() % 2) {
-                current_row |= (1ULL << col_idx); // Establece el bit en la posición col_idx
+                current_row |= (1ULL << col_idx); // Pone en 1 el bit si la celda está viva
             }
         }
         board->grid[row_idx] = current_row;
     }
 }
 
-/**
- * @brief Cuenta los vecinos vivos de una celda utilizando operaciones bit a bit.
- * @param board Puntero al tablero.
- * @param row Fila de la celda.
- * @param col Columna de la celda.
- * @return Número de vecinos vivos.
- */
+// Cuenta cuántas vecinas vivas tiene una celda en la posición (fila, columna)
 int count_living_neighbors(const GameBoard *board, int row, int col) {
     int count = 0;
-    // Ajustar índices para manejar bordes toroidales (que se envuelven)
-    int prev_row_idx = (row - 1 + BOARD_ROWS) % BOARD_ROWS;
-    int next_row_idx = (row + 1) % BOARD_ROWS;
-    int prev_col_idx = (col - 1 + BOARD_COLS) % BOARD_COLS;
-    int next_col_idx = (col + 1) % BOARD_COLS;
+    int fila_anterior = (row - 1 + BOARD_ROWS) % BOARD_ROWS; // Borde toroidal arriba
+    int fila_siguiente = (row + 1) % BOARD_ROWS; // Borde toroidal abajo
+    int columna_anterior = (col - 1 + BOARD_COLS) % BOARD_COLS; // Borde toroidal izquierda
+    int columna_siguiente = (col + 1) % BOARD_COLS; // Borde toroidal derecha
 
-    // Verificar las 8 celdas vecinas
-    count += (board->grid[prev_row_idx] >> prev_col_idx) & 1;
-    count += (board->grid[prev_row_idx] >> col) & 1;
-    count += (board->grid[prev_row_idx] >> next_col_idx) & 1;
-    count += (board->grid[row] >> prev_col_idx) & 1;
-    count += (board->grid[row] >> next_col_idx) & 1;
-    count += (board->grid[next_row_idx] >> prev_col_idx) & 1;
-    count += (board->grid[next_row_idx] >> col) & 1;
-    count += (board->grid[next_row_idx] >> next_col_idx) & 1;
+    count += (board->grid[fila_anterior] >> columna_anterior) & 1; // Superior-izquierda
+    count += (board->grid[fila_anterior] >> col) & 1; // Superior
+    count += (board->grid[fila_anterior] >> columna_siguiente) & 1; // Superior-derecha
+    count += (board->grid[row] >> columna_anterior) & 1; // Izquierda
+    count += (board->grid[row] >> columna_siguiente) & 1; // Derecha
+    count += (board->grid[fila_siguiente] >> columna_anterior) & 1; // Inferior-izquierda
+    count += (board->grid[fila_siguiente] >> col) & 1; // Inferior
+    count += (board->grid[fila_siguiente] >> columna_siguiente) & 1; // Inferior-derecha
 
     return count;
 }
 
-/**
- * @brief Actualiza el tablero a la siguiente generación utilizando paralelismo.
- * @param current Puntero al tablero actual.
- * @param next Puntero al tablero de la siguiente generación.
- */
+// Calcula la siguiente generación aplicando las reglas del Juego de la Vida
 void compute_next_generation(const GameBoard *current, GameBoard *next) {
-    #pragma omp parallel for num_threads(NUM_THREADS)
+    #pragma omp parallel for num_threads(NUM_THREADS) // Distribuye las filas entre los hilos
     for (int row_idx = 0; row_idx < BOARD_ROWS; row_idx++) {
         BoardRow next_gen_row = 0;
         for (int col_idx = 0; col_idx < BOARD_COLS; col_idx++) {
-            int neighbor_count = count_living_neighbors(current, row_idx, col_idx);
-            int is_alive = (current->grid[row_idx] >> col_idx) & 1;
-            
-            // Reglas del Juego de la Vida
-            if (is_alive && (neighbor_count == 2 || neighbor_count == 3)) {
-                next_gen_row |= (1ULL << col_idx); // La célula permanece viva
-            } else if (!is_alive && neighbor_count == 3) {
-                next_gen_row |= (1ULL << col_idx); // Nace una nueva célula
+            int cantidad_vecinos_vivos = count_living_neighbors(current, row_idx, col_idx);
+            int esta_viva = (current->grid[row_idx] >> col_idx) & 1;
+
+            if (esta_viva && (cantidad_vecinos_vivos == 2 || cantidad_vecinos_vivos == 3)) {
+                next_gen_row |= (1ULL << col_idx); // La celda se mantiene viva
+            } else if (!esta_viva && cantidad_vecinos_vivos == 3) {
+                next_gen_row |= (1ULL << col_idx); // Una nueva celda nace
             }
         }
         next->grid[row_idx] = next_gen_row;
