@@ -9,14 +9,14 @@
 #include "bitboard.h"
 
 /**
- * @brief Prints the game board to the console.
- * @param board Pointer to the board to be printed.
+ * @brief Imprime el tablero de juego en la consola.
+ * @param board Puntero al tablero que se va a imprimir.
  */
 void display_board(const GameBoard *board);
 
 /**
- * @brief Pauses execution between generations.
- * @param is_manual If 1, waits for user input; if 0, uses automatic delay.
+ * @brief Pausa la ejecución entre generaciones.
+ * @param is_manual Si es 1, espera entrada del usuario; si es 0, usa retraso automático.
  */
 void pause_execution(int is_manual);
 

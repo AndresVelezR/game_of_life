@@ -23,7 +23,7 @@ void initialize_random_board(GameBoard *board) {
         BoardRow current_row = 0;
         for (int col_idx = 0; col_idx < BOARD_COLS; col_idx++) {
             if (rand() % 2) {
-                current_row |= (1ULL << col_idx); // Set bit at position col_idx
+                current_row |= (1ULL << col_idx); // Establece el bit en la posición col_idx
             }
         }
         board->grid[row_idx] = current_row;
@@ -39,13 +39,13 @@ void initialize_random_board(GameBoard *board) {
  */
 int count_living_neighbors(const GameBoard *board, int row, int col) {
     int count = 0;
-    // Adjust indices for toroidal (wraparound) boundaries
+    // Ajustar índices para manejar bordes toroidales (que se envuelven)
     int prev_row_idx = (row - 1 + BOARD_ROWS) % BOARD_ROWS;
     int next_row_idx = (row + 1) % BOARD_ROWS;
     int prev_col_idx = (col - 1 + BOARD_COLS) % BOARD_COLS;
     int next_col_idx = (col + 1) % BOARD_COLS;
 
-    // Check all 8 neighboring cells
+    // Verificar las 8 celdas vecinas
     count += (board->grid[prev_row_idx] >> prev_col_idx) & 1;
     count += (board->grid[prev_row_idx] >> col) & 1;
     count += (board->grid[prev_row_idx] >> next_col_idx) & 1;
@@ -71,11 +71,11 @@ void compute_next_generation(const GameBoard *current, GameBoard *next) {
             int neighbor_count = count_living_neighbors(current, row_idx, col_idx);
             int is_alive = (current->grid[row_idx] >> col_idx) & 1;
             
-            // Game of Life rules
+            // Reglas del Juego de la Vida
             if (is_alive && (neighbor_count == 2 || neighbor_count == 3)) {
-                next_gen_row |= (1ULL << col_idx); // Cell stays alive
+                next_gen_row |= (1ULL << col_idx); // La célula permanece viva
             } else if (!is_alive && neighbor_count == 3) {
-                next_gen_row |= (1ULL << col_idx); // Cell is born
+                next_gen_row |= (1ULL << col_idx); // Nace una nueva célula
             }
         }
         next->grid[row_idx] = next_gen_row;

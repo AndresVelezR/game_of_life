@@ -12,9 +12,9 @@
 
 /**
  * @brief Ejecuta la simulación del Juego de la Vida, mostrando cada generación.
- * @param board Pointer to the initial game board.
- * @param generations Number of generations to simulate.
- * @param is_manual If 1, waits for user input to advance; if 0, uses automatic delay.
+ * @param board Puntero al tablero de juego inicial.
+ * @param generations Número de generaciones a simular.
+ * @param is_manual Si es 1, espera entrada del usuario para avanzar; si es 0, usa retraso automático.
  */
 void run_simulation(GameBoard *board, int generations, int is_manual);
 

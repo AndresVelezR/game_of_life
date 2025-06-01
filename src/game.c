@@ -34,11 +34,11 @@ void run_simulation(GameBoard *board, int generations, int is_manual) {
             board->grid[row] = next_gen.grid[row];
         }
 
-        // Pause to visualize the generation
+        // Pausar para visualizar la generación
         pause_execution(is_manual);
     }
     
-    // Display the final generation
+    // Mostrar la generación final
     display_board(board);
-    printf("Simulation completed (%d generations).\n", generations);
+    printf("Simulación completada (%d generaciones).\n", generations);
 }

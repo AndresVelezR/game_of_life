@@ -13,12 +13,12 @@
 #include <stdint.h>
 #include "config.h"
 
-/** @brief Data type for a single row of the game board (64 bits). */
+/** @brief Tipo de dato para una fila del tablero (64 bits). */
 typedef uint64_t BoardRow;
 
-/** @brief Structure representing the complete game board. */
+/** @brief Estructura que representa el tablero de juego completo. */
 typedef struct {
-    BoardRow grid[BOARD_ROWS]; /**< Array of rows, each represented as a 64-bit integer. */
+    BoardRow grid[BOARD_ROWS]; /**< Arreglo de filas, cada una representada como un entero de 64 bits. */
 } GameBoard;
 
 /**
