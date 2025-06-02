@@ -19,7 +19,7 @@ void display_board(const GameBoard *board) {
 // Pausa entre generaciones de manera manual o con retraso
 void pause_execution(int is_manual) {
     if (is_manual) {
-        printf("Press Enter to continue to the next generation...\n");
+        printf("Presiona Enter para continuar a la siguiente generación...\n");
         getchar(); // Espera tecla Enter
     } else {
         usleep(500000); // Retraso de 0.5 segundos
